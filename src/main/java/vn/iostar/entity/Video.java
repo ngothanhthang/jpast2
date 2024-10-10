@@ -53,8 +53,7 @@ public class Video implements Serializable{
 
 
 	 private int views;
-	 @Column(name="categoryName",columnDefinition ="NVARCHAR(MAX)" )
-	 private String categoryName;
+
 	 @ManyToOne
 
 
@@ -124,13 +123,9 @@ public class Video implements Serializable{
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-	public String getCategoryName() {
-        return categoryName;
+	
+    public String getCategoryName() {	
+        return category != null ? category.getCategoryname() : null;
     }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
 	 
 }

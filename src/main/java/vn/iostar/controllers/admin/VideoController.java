@@ -97,7 +97,6 @@ public class VideoController extends HttpServlet{
     	        video.setViews(views);
     	        video.setActive(active);
     	        video.setCategory(category); // Thiết lập category
-    	        video.setCategoryName(category.getCategoryname()); // Gán tên thể loại
 
     	        // Xử lý hình ảnh (nếu có)
     	        String fname = video.getPoster(); // Giữ lại ảnh cũ mặc định
@@ -139,8 +138,6 @@ public class VideoController extends HttpServlet{
     	        video.setViews(views);
     	        video.setActive(active);
     	        video.setCategory(category); // Thiết lập category
-    	        video.setCategoryName(category.getCategoryname()); // Gán tên thể loại
-
     	        // Xử lý hình ảnh
     	        String fname = "";
     	        String uploadPath = getServletContext().getRealPath("/upload");
