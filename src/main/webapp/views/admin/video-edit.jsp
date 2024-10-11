@@ -7,118 +7,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cập nhật Video</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',  // Thay đổi màu chính
+                        secondary: '#ef4444', // Thay đổi màu thứ cấp
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
+            background: linear-gradient(120deg, #d3cce3 0%, #e9e4f0 100%);  /* Thay đổi màu nền */
         }
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(6px);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-        label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea,
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        input[type="radio"] {
-            margin-right: 5px;
-        }
-        input[type="submit"] {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-        }
-        input[type="submit"]:hover {
-            background-color: #218838;
-        }
-        img {
-            margin-top: 10px;
-            border-radius: 4px;
-        }
-        .status-label {
-            margin-top: 10px;
-        }
-        .category-label {
-            margin-top: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+<div class="max-w-3xl mx-auto">
+    <div class="glass-effect p-6 mb-8">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">
+            <i class="fas fa-video mr-2"></i>Cập nhật Video
+        </h2>
+        <form action="<c:url value='/admin/video/update'></c:url>" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="videoId" name="videoId" value="${video.videoId}">
 
-<div class="form-container">
-    <h2>Cập nhật Video</h2>
-    <form action="<c:url value='/admin/video/update'></c:url>" method="post" enctype="multipart/form-data">
-        <input type="hidden" id="videoId" name="videoId" value="${video.videoId}">
+            <label for="title" class="font-semibold">Tiêu đề:</label>
+            <input type="text" id="title" name="title" value="${video.title}" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary">
 
-        <label for="title">Tiêu đề:</label>
-        <input type="text" id="title" name="title" value="${video.title}" required>
+            <label for="description" class="font-semibold mt-4">Mô tả:</label>
+            <textarea id="description" name="description" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary">${video.description}</textarea>
 
-        <label for="description">Mô tả:</label>
-        <textarea id="description" name="description" required>${video.description}</textarea>
+            <label for="views" class="font-semibold mt-4">Lượt xem:</label>
+            <input type="number" id="views" name="views" value="${video.views}" min="0" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary">
 
-        <label for="views">Lượt xem:</label>
-        <input type="number" id="views" name="views" value="${video.views}" min="0" required>
+            <label class="font-semibold mt-4">Trạng thái:</label>
+            <div class="flex items-center mb-4">
+                <label for="active" class="mr-4">
+                    <input type="radio" id="active" name="active" value="1" <c:if test="${video.active == 1}">checked</c:if>> Kích hoạt
+                </label>
+                <label for="inactive">
+                    <input type="radio" id="inactive" name="active" value="0" <c:if test="${video.active == 0}">checked</c:if>> Khóa
+                </label>
+            </div>
 
-        <label class="status-label">Trạng thái:</label>
-        <input type="radio" id="active" name="active" value="1" <c:if test="${video.active == 1}">checked</c:if>>
-        <label for="active">Kích hoạt</label>
-        <input type="radio" id="inactive" name="active" value="0" <c:if test="${video.active == 0}">checked</c:if>>
-        <label for="inactive">Khóa</label>
+            <label class="font-semibold mt-4" for="categoryId">Chọn thể loại:</label>
+            <select id="categoryId" name="categoryId" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary">
+                <c:forEach items="${categories}" var="category">
+                    <option value="${category.categoryId}" <c:if test="${category.categoryId == video.category.categoryId}">selected</c:if>>${category.categoryname}</option>
+                </c:forEach>
+            </select>
 
-        <label class="category-label" for="categoryId">Chọn thể loại:</label>
-        <select id="categoryId" name="categoryId" required>
-            <c:forEach items="${categories}" var="category">
-                <option value="${category.categoryId}" <c:if test="${category.categoryId == video.category.categoryId}">selected</c:if>>${category.categoryname}</option>
-            </c:forEach>
-        </select>
+            <label class="font-semibold mt-4" for="poster">Hình đại diện hiện tại:</label>
+            <img id="currentPoster" src="${pageContext.request.contextPath}/upload/${video.poster}" height="150" width="200" alt="Current Poster" class="rounded-lg"/>
 
-        <label for="poster" onclick="return false;">Hình đại diện hiện tại:</label>
-        <img id="currentPoster" src="${pageContext.request.contextPath}/upload/${video.poster}" height="150" width="200" alt="Current Poster">
+            <label class="font-semibold mt-4" for="poster">Thay đổi hình đại diện:</label>
+            <input type="file" id="poster" name="poster" class="w-full py-2 border border-gray-300 rounded-lg">
+            
+            <div id="currentVideoContainer" class="mt-4">
+                <video id="videoPreview" width="200" controls>
+                    <source src="${pageContext.request.contextPath}/uploadvideo/${video.videoPath}" type="video/mp4">
+                </video>
+            </div>
 
-        <label for="poster" onclick="return false;">Thay đổi hình đại diện:</label>
-        <input type="file" id="poster" name="poster">
-		
-		<div id="currentVideoContainer">
-    <video id="videoPreview" width="200" controls>
-        <source src="${pageContext.request.contextPath}/uploadvideo/${video.videoPath}" type="video/mp4">
-    </video>
+            <label class="font-semibold mt-4" for="newVideo">Tải video mới:</label>
+            <input type="file" id="newVideo" name="newVideo" accept="video/mp4" class="w-full py-2 border border-gray-300 rounded-lg">
+
+            <input type="submit" value="Cập nhật Video" class="w-full px-4 py-2 mt-6 bg-primary text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300">
+        </form>
+    </div>
 </div>
-
-<label for="newVideo" onclick="return false;">Tải video mới:</label>
-<input type="file" id="newVideo" name="newVideo" accept="video/mp4">
-
-
-        <input type="submit" value="Cập nhật Video">
-    </form>
-</div>
-
 
 <!-- JavaScript để xử lý việc chọn tệp và hiển thị ảnh mới -->
 <script>
@@ -131,7 +100,8 @@
         };
         reader.readAsDataURL(event.target.files[0]);
     });
- // Hiển thị video mới
+
+    // Hiển thị video mới
     document.getElementById('newVideo').addEventListener('change', function(event) {
         var reader = new FileReader();
         reader.onload = function(e) {
@@ -142,35 +112,7 @@
         };
         reader.readAsDataURL(event.target.files[0]);
     });
-
-
- // Hiển thị video mới
-    /* document.getElementById('newVideo').addEventListener('change', function(event) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var videoContainer = document.getElementById('currentVideoContainer');
-            videoContainer.innerHTML = ''; // Xóa video hiện tại
-
-            var video = document.createElement('video'); // Tạo thẻ video mới
-            video.width = 200; // Đặt chiều rộng
-            video.controls = true; // Hiển thị điều khiển
-
-            var source = document.createElement('source'); // Tạo thẻ source cho video
-            source.src = e.target.result; // Gán đường dẫn video
-            source.type = 'video/mp4'; // Đặt kiểu video
-
-            video.appendChild(source); // Thêm source vào video
-            video.innerHTML = 'Trình duyệt của bạn không hỗ trợ thẻ video.'; // Thông báo nếu không hỗ trợ video
-            videoContainer.appendChild(video); // Thêm video mới vào trang
-        };
-        
-        console.log(event.target.files[0]); // Kiểm tra tệp video đã chọn
-        reader.readAsDataURL(event.target.files[0]); // Đọc file video từ input
-    }); */
- 
 </script>
-
-
 
 </body>
 </html>

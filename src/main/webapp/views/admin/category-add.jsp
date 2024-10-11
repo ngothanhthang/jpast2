@@ -1,119 +1,234 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm Thể loại</title>
+    <title>Thêm Thể Loại</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        :root {
+            --primary-color: #4e54c8;
+            --secondary-color: #8f94fb;
+            --text-color: #333;
+            --background-color: #f0f2f5;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-        label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
-        input[type="text"],
-        input[type="file"],
-        input[type="radio"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .radio-group {
-            display: flex; /* Hiển thị nút radio trên cùng một hàng */
-            align-items: center; /* Căn giữa các nút radio */
-            gap: 15px; /* Khoảng cách giữa các nút radio */
-        }
-        .status-label {
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
             display: flex;
-            align-items: center; /* Căn giữa chữ và nút radio */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        input[type="submit"] {
-            background-color: #28a745;
-            color: white;
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            width: 400px;
+            max-width: 100%;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h2 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header .icon {
+            font-size: 3em;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
             border: none;
-            padding: 10px;
-            border-radius: 4px;
+            border-radius: 50px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f0f0f0;
+            color: var(--text-color);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--secondary-color);
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 20px;
+            font-size: 12px;
+            color: var(--primary-color);
+            background-color: white;
+            padding: 0 5px;
+            border-radius: 10px;
+        }
+
+        .form-group i {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 50px;
             cursor: pointer;
             width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            height: auto;
             margin-top: 20px;
+            border-radius: 10px;
+            display: none;
         }
-        input[type="submit"]:hover {
-            background-color: #218838;
-        }
-        img {
-            margin-top: 10px;
-            border-radius: 4px;
-            display: none; /* Ảnh không hiển thị trước khi chọn */
-            max-width: 100%; /* Đảm bảo ảnh không quá rộng */
-            height: auto; /* Giữ tỉ lệ khung hình */
+
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+                border-radius: 0;
+            }
         }
     </style>
 </head>
 <body>
-
-<div class="form-container">
-    <h2>Thêm Thể loại</h2>
-    <form action="<c:url value='/admin/category/insert'></c:url>" method="post" enctype="multipart/form-data">
-        <label for="categoryname">Tên Thể loại:</label>
-        <input type="text" id="categoryname" name="categoryname" required>
-
-        <label for="images" onclick="return false;">Hình ảnh:</label>
-        <input type="file" id="images" name="images" accept="image/*" onchange="chooseFile(this)" required><br>
-
-        <!-- Khung hiển thị ảnh -->
-        <img id="imagePreview" src="" alt="Preview Image">
-
-        <label>Trạng thái:</label>
-        <div class="radio-group">
-            <div class="status-label">
-                <input type="radio" id="active" name="status" value="1" checked>
-                <label for="active">Đang hoạt động</label>
-            </div>
-            <div class="status-label">
-                <input type="radio" id="inactive" name="status" value="0">
-                <label for="inactive">Khóa</label>
-            </div>
+    <div class="container">
+        <div class="header">
+            <div class="icon"><i class="fas fa-tags"></i></div>
+            <h2>Thêm Thể Loại</h2>
         </div>
+        <form action="${pageContext.request.contextPath}/admin/category/insert" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <input type="text" id="categoryname" name="categoryname" placeholder=" " required>
+                <label for="categoryname">Tên Thể Loại</label>
+                <i class="fas fa-folder"></i>
+            </div>
+            <div class="form-group">
+                <input type="file" id="images" name="images" accept="image/*" onchange="chooseFile(this)" required>
+                <label for="images">Hình Ảnh</label>
+                <i class="fas fa-image"></i>
+            </div>
+            <img id="imagePreview" src="" alt="Preview Image">
+            <div class="radio-group">
+                <label>
+                    <input type="radio" id="active" name="status" value="1" checked>
+                    Đang hoạt động
+                </label>
+                <label>
+                    <input type="radio" id="inactive" name="status" value="0">
+                    Khóa
+                </label>
+            </div>
+            <button type="submit">Thêm Thể Loại</button>
+        </form>
+    </div>
 
-        <input type="submit" value="Thêm Thể loại">
-    </form>
-</div>
-
-<script>
-    function chooseFile(fileInput) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            // Lấy thẻ img và gán giá trị src bằng dữ liệu ảnh
-            var image = document.getElementById('imagePreview');
-            image.src = e.target.result;
-            image.style.display = 'block'; // Hiển thị ảnh sau khi chọn file
-        };
-        // Đọc file ảnh từ input
-        reader.readAsDataURL(fileInput.files[0]);
-    }
-</script>
-
+    <script>
+        function chooseFile(fileInput) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var image = document.getElementById('imagePreview');
+                image.src = e.target.result;
+                image.style.display = 'block';
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    </script>
 </body>
 </html>

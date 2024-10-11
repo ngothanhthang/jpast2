@@ -1,11 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cập Nhật Thể Loại</title>
+    <title>Đăng Nhập</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -34,9 +33,15 @@
         }
 
         @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .container {
@@ -80,8 +85,7 @@
             position: relative;
         }
 
-        .form-group input[type="text"],
-        .form-group input[type="file"] {
+        .form-group input {
             width: 100%;
             padding: 15px 15px 15px 50px;
             border: none;
@@ -128,22 +132,6 @@
             font-size: 20px;
         }
 
-        .radio-group {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 25px;
-        }
-
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .radio-group input[type="radio"] {
-            margin-right: 10px;
-        }
-
         button {
             background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             border: none;
@@ -165,30 +153,32 @@
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
 
-        #currentImage, #imagePreview {
-            max-width: 100%;
-            height: auto;
-            margin-top: 20px;
-            border-radius: 10px;
-            display: block;
-        }
-
-        .image-container {
+        .error {
+            color: #f44336;
             text-align: center;
-            margin-bottom: 25px;
+            margin-top: 15px;
+            font-size: 14px;
+            background-color: rgba(244, 67, 54, 0.1);
+            padding: 10px;
+            border-radius: 5px;
         }
 
-        .image-label {
-            display: block;
-            margin-bottom: 10px;
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-color);
+        }
+
+        .register-link a {
             color: var(--primary-color);
+            text-decoration: none;
             font-weight: bold;
-            text-align: center; /* Đưa label ra giữa */
+            transition: all 0.3s ease;
         }
 
-        .image-group {
-            margin-bottom: 25px;
-            position: relative;
+        .register-link a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
         }
 
         @media (max-width: 480px) {
@@ -202,66 +192,28 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="icon"><i class="fas fa-edit"></i></div>
-            <h2>Cập Nhật Thể Loại</h2>
+            <div class="icon"><i class="fas fa-user-circle"></i></div>
+            <h2>Đăng Nhập</h2>
         </div>
-        <form action="<c:url value='/admin/category/update'/>" method="post" enctype="multipart/form-data">
-            <input type="hidden" id="categoryid" name="categoryid" value="${cate.categoryId}">
-            
+        <form action="${pageContext.request.contextPath}/login" method="post">
             <div class="form-group">
-                <input type="text" id="categoryname" name="categoryname" value="${cate.categoryname}" placeholder=" " required>
-                <label for="categoryname">Tên Thể Loại</label>
-                <i class="fas fa-folder"></i>
+                <input type="text" id="username" name="username" placeholder=" " required>
+                <label for="username">Tên Đăng Nhập</label>
+                <i class="fas fa-user"></i>
             </div>
-
-            <div class="radio-group">
-                <label>
-                    <input type="radio" id="active" name="status" value="1" <c:if test="${cate.status == 1}">checked</c:if>>
-                    Kích hoạt
-                </label>
-                <label>
-                    <input type="radio" id="inactive" name="status" value="0" <c:if test="${cate.status == 0}">checked</c:if>>
-                    Khóa
-                </label>
+            <div class="form-group">
+                <input type="password" id="password" name="password" placeholder=" " required>
+                <label for="password">Mật Khẩu</label>
+                <i class="fas fa-lock"></i>
             </div>
-
-            <div class="image-container">
-                <span class="image-label">Hình đại diện hiện tại:</span>
-                <img id="currentImage" src="${pageContext.request.contextPath}/upload/${cate.images}" alt="Current Image">
-            </div>
-
-            <div class="image-group">
-                <div class="image-label">Thay đổi hình đại diện:</div>
-                <div class="form-group">
-                    <input type="file" id="images" name="images" accept="image/*" onchange="previewImage(this)">
-                    <label for="images"> </label> <!-- Xóa "Chọn hình ảnh" -->
-                    <i class="fas fa-image"></i>
-                </div>
-                <img id="imagePreview" src="" alt="Preview Image" style="display: none;">
-            </div>
-
-            <button type="submit">Cập Nhật Thể Loại</button>
+            <button type="submit">Đăng Nhập</button>
+            <c:if test="${not empty error}">
+                <div class="error">${error}</div>
+            </c:if>
         </form>
+        <div class="register-link">
+            <p>Bạn chưa có tài khoản? <a href="${pageContext.request.contextPath}/register">Đăng ký tại đây</a>.</p>
+        </div>
     </div>
-
-    <script>
-        function previewImage(input) {
-            var preview = document.getElementById('imagePreview');
-            var file = input.files[0];
-            var reader = new FileReader();
-
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-
-            if (file) {
-                reader.readAsDataURL(file);
-            } else {
-                preview.src = "";
-                preview.style.display = 'none';
-            }
-        }
-    </script>
 </body>
 </html>
