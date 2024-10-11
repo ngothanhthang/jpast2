@@ -41,6 +41,11 @@
         }
         input[type="radio"] {
             margin-right: 5px;
+            vertical-align: middle; /* Căn chỉnh theo chiều dọc */
+        }
+        .radio-label {
+            display: inline-block; /* Đặt các nhãn radio trên cùng một hàng */
+            margin-right: 15px; /* Khoảng cách giữa các nhãn */
         }
         input[type="submit"] {
             background-color: #28a745;
@@ -61,6 +66,7 @@
         }
         .status-label {
             margin-top: 10px;
+            display: block; /* Đặt nhãn trạng thái thành block */
         }
     </style>
 </head>
@@ -71,20 +77,21 @@
     <form action="<c:url value='/admin/category/update'></c:url>" method="post" enctype="multipart/form-data">
         <input type="hidden" id="categoryid" name="categoryid" value="${cate.categoryId}">
 
-<label for="categoryname">Tên thể loại:</label>
-<input type="text" id="categoryname" name="categoryname" value="${cate.categoryname}" required>
+        <label for="categoryname">Tên thể loại:</label>
+        <input type="text" id="categoryname" name="categoryname" value="${cate.categoryname}" required>
 
-<label class="status-label">Trạng thái:</label>
-<input type="radio" id="active" name="status" value="1" <c:if test="${cate.status == 1}">checked</c:if>>
-<label for="active">Kích hoạt</label>
-<input type="radio" id="inactive" name="status" value="0" <c:if test="${cate.status == 0}">checked</c:if>>
-<label for="inactive">Khóa</label>
+        <div class="status-label">Trạng thái:</div>
+        <label class="radio-label">
+            <input type="radio" id="active" name="status" value="1" <c:if test="${cate.status == 1}">checked</c:if>> Kích hoạt
+        </label>
+        <label class="radio-label">
+            <input type="radio" id="inactive" name="status" value="0" <c:if test="${cate.status == 0}">checked</c:if>> Khóa
+        </label>
 
-<label for="images">Hình đại diện hiện tại:</label>
-<img id="currentImage" src="${pageContext.request.contextPath}/upload/${cate.images}" height="150" width="200" alt="Current Image">
+        <label for="images" onclick="return false;">Hình đại diện hiện tại:</label>
+        <img id="currentImage" src="${pageContext.request.contextPath}/upload/${cate.images}" height="150" width="200" alt="Current Image">
 
-
-        <label for="images">Thay đổi hình đại diện:</label>
+        <label for="images" onclick="return false;">Thay đổi hình đại diện:</label>
         <input type="file" id="images" name="images">
 
         <input type="submit" value="Cập nhật Thể loại">

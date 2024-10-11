@@ -100,9 +100,9 @@ public class CategoryDao implements ICategoryDao{
 	@Override
 	public List<Category> findByCategoryname(String catname){
 		EntityManager enma = JPAConfig.getEntityManager();
-		String jpql = "SELECT c FROM Category c WHERE c.catename like :catname";
+		String jpql = "SELECT c FROM Category c WHERE c.categoryname like :catname";
 		TypedQuery<Category> query= enma.createQuery(jpql, Category.class);
-		query.setParameter("catename", "%" + catname + "%");
+		query.setParameter("catname", "%" + catname + "%");
 		return query.getResultList();
 		}
 	@Override

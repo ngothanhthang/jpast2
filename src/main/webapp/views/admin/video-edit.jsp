@@ -104,24 +104,73 @@
 
         <label for="poster" onclick="return false;">Thay đổi hình đại diện:</label>
         <input type="file" id="poster" name="poster">
+		
+		<div id="currentVideoContainer">
+    <video id="videoPreview" width="200" controls>
+        <source src="${pageContext.request.contextPath}/uploadvideo/${video.videoPath}" type="video/mp4">
+    </video>
+</div>
+
+<label for="newVideo" onclick="return false;">Tải video mới:</label>
+<input type="file" id="newVideo" name="newVideo" accept="video/mp4">
+
 
         <input type="submit" value="Cập nhật Video">
     </form>
 </div>
 
+
 <!-- JavaScript để xử lý việc chọn tệp và hiển thị ảnh mới -->
 <script>
+    // Hiển thị hình đại diện mới
     document.getElementById('poster').addEventListener('change', function(event) {
         var reader = new FileReader();
         reader.onload = function(e) {
-            // Lấy thẻ img và gán giá trị src bằng dữ liệu ảnh
             var image = document.getElementById('currentPoster');
             image.src = e.target.result; // Cập nhật ảnh mới
         };
-        // Đọc file ảnh từ input
         reader.readAsDataURL(event.target.files[0]);
     });
+ // Hiển thị video mới
+    document.getElementById('newVideo').addEventListener('change', function(event) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var video = document.getElementById('videoPreview'); // Lấy thẻ video
+            video.src = e.target.result; // Cập nhật đường dẫn video mới
+            video.style.display = 'block'; // Hiển thị video mới
+            video.load(); // Tải video mới
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+
+
+ // Hiển thị video mới
+    /* document.getElementById('newVideo').addEventListener('change', function(event) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var videoContainer = document.getElementById('currentVideoContainer');
+            videoContainer.innerHTML = ''; // Xóa video hiện tại
+
+            var video = document.createElement('video'); // Tạo thẻ video mới
+            video.width = 200; // Đặt chiều rộng
+            video.controls = true; // Hiển thị điều khiển
+
+            var source = document.createElement('source'); // Tạo thẻ source cho video
+            source.src = e.target.result; // Gán đường dẫn video
+            source.type = 'video/mp4'; // Đặt kiểu video
+
+            video.appendChild(source); // Thêm source vào video
+            video.innerHTML = 'Trình duyệt của bạn không hỗ trợ thẻ video.'; // Thông báo nếu không hỗ trợ video
+            videoContainer.appendChild(video); // Thêm video mới vào trang
+        };
+        
+        console.log(event.target.files[0]); // Kiểm tra tệp video đã chọn
+        reader.readAsDataURL(event.target.files[0]); // Đọc file video từ input
+    }); */
+ 
 </script>
+
+
 
 </body>
 </html>

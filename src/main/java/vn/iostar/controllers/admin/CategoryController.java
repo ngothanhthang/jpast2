@@ -14,16 +14,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import vn.iostar.entity.Category;
 import vn.iostar.services.impl.CategoryService;
-import vn.iostar.utils.Constant;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
 maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 @WebServlet(urlPatterns = {"/admin/categories", "/admin/category/edit", "/admin/category/update",
-"/admin/category/insert", "/admin/category/add", "/admin/category/delete"})
+"/admin/category/insert", "/admin/category/add", "/admin/category/delete","/admin/category/search"})
 public class CategoryController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private CategoryService cateService = new CategoryService();
+    private static final int PAGE_SIZE = 5; // Số dòng mỗi trang
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -33,8 +33,21 @@ public class CategoryController extends HttpServlet {
         String url = req.getRequestURI();
 
         if (url.contains("categories")) {
-            List<Category> list = cateService.findAll();
+            // Lấy số trang từ tham số request
+            String pageParam = req.getParameter("page");
+            int page = (pageParam != null) ? Integer.parseInt(pageParam) : 0;
+
+            // Lấy danh sách thể loại cho trang hiện tại
+            List<Category> list = cateService.findAll(page, PAGE_SIZE);
             req.setAttribute("listcate", list);
+
+            // Tính toán tổng số trang
+            int totalCategories = cateService.count();
+            int totalPages = (totalCategories > 0) ? (int) Math.ceil((double) totalCategories / PAGE_SIZE) : 0;
+
+            req.setAttribute("totalPages", totalPages);
+            req.setAttribute("currentPage", page);
+
             req.getRequestDispatcher("/views/admin/category-list.jsp").forward(req, resp);
         } else if (url.contains("/admin/category/edit")) {
             int id = Integer.parseInt(req.getParameter("id"));
@@ -51,7 +64,56 @@ public class CategoryController extends HttpServlet {
                 e.printStackTrace();
             }
             resp.sendRedirect(req.getContextPath() + "/admin/categories");
+        } else if (url.contains("/admin/category/search")) {
+            String title = req.getParameter("name");
+            
+            // Tìm kiếm theo tên thể loại
+            List<Category> list = cateService.findByCategoryname(title);
+
+            // Cập nhật tổng số trang dựa trên số lượng kết quả tìm kiếm
+            int totalCategories = list.size(); // Lấy số lượng mục từ kết quả tìm kiếm
+            int totalPages = (int) Math.ceil((double) totalCategories / PAGE_SIZE);
+            req.setAttribute("totalPages", totalPages);
+            
+            // Lấy số trang hiện tại từ tham số (nếu có), nếu không thì mặc định là 0
+            String pageParam = req.getParameter("page");
+            int currentPage = 0; // Mặc định là trang đầu tiên
+            
+            try {
+                if (pageParam != null) {
+                    currentPage = Integer.parseInt(pageParam);
+                }
+            } catch (NumberFormatException e) {
+                currentPage = 0; // Nếu số trang không hợp lệ, mặc định về trang đầu tiên
+            }
+
+            // Đảm bảo currentPage không nhỏ hơn 0 và không vượt quá số trang
+            if (currentPage < 0) {
+                currentPage = 0;
+            } else if (currentPage >= totalPages) {
+                currentPage = totalPages - 1;
+            }
+
+            req.setAttribute("currentPage", currentPage);
+
+            // Lấy danh sách các mục dựa trên trang hiện tại và số mục trên mỗi trang
+            int start = currentPage * PAGE_SIZE; // Vị trí bắt đầu
+            int end = Math.min(start + PAGE_SIZE, totalCategories); // Vị trí kết thúc
+            
+            if (start < 0 || start >= totalCategories) {
+                start = 0; // Đảm bảo start không nằm ngoài danh sách
+            }
+            
+            List<Category> pagedList = list.subList(start, end);
+
+            req.setAttribute("listcate", pagedList);
+            req.setAttribute("searchName", title);
+
+            req.getRequestDispatcher("/views/admin/category-list.jsp").forward(req, resp);
         }
+
+
+
     }
 
     @Override

@@ -110,7 +110,14 @@
         
         <!-- Khung hiển thị ảnh -->
         <img id="imagePreview" src="" alt="Preview Image">
-
+		
+		<label for="videoFile">Chọn Video:</label>
+		
+		<input type="file" id="videoFile" name="videoFile" accept="video/*" onchange="previewVideo(this)"><br>
+		
+		<!-- Khung hiển thị video -->
+		<video id="videoPreview" width="320" height="240" controls style="display:none;"></video>
+		
         <input type="submit" value="Thêm Video">
     </form>
 </div>
@@ -132,7 +139,25 @@
             imagePreview.style.display = 'none'; // Ẩn ảnh nếu không có file nào
         }
     }
+
+    function previewVideo(fileInput) {
+        const file = fileInput.files[0];
+        const videoPreview = document.getElementById('videoPreview');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                videoPreview.src = e.target.result;
+                videoPreview.style.display = 'block'; // Hiển thị video sau khi chọn file
+            };
+            reader.readAsDataURL(file);
+        } else {
+            videoPreview.src = '';
+            videoPreview.style.display = 'none'; // Ẩn video nếu không có file nào
+        }
+    }
 </script>
+
 
 </body>
 </html>

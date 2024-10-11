@@ -5,6 +5,7 @@
 <html lang="vi">
 
 <head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách Thể loại</title>
@@ -22,6 +23,17 @@
 </head>
 
 <body class="bg-gray-100 p-6">
+    <div class="text-center mb-4">
+        <form action="<c:url value='/admin/category/search'></c:url>" method="get" class="inline-block">
+            <input type="text" name="name" placeholder="Nhập tên thể loại" class="border border-gray-300 p-2 rounded-lg" required>
+            <button type="submit" class="bg-green text-pink border border-gray-300 hover:bg-gray-200 font-bold py-2 px-4 rounded transition duration-300">
+                <i class="fas fa-search" style="color: black;"></i>
+            </button>
+        </form>
+    </div>
+</body>
+
+	
     <div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-3xl font-bold mb-4 text-gray-800 text-center">Danh sách Thể loại</h2>
         
@@ -72,7 +84,43 @@
                 </tbody>
             </table>
         </div>
-    </div>
+	 <!-- Phân trang -->
+
+<div class="flex justify-center mt-4">
+    <c:if test="${currentPage > 0}">
+        <a href="<c:url value='/admin/category/search?name=${searchName}&page=${currentPage - 1}'/>" 
+           class="bg-black text-white hover:bg-gray-800 py-2 px-4 rounded mx-2">
+           Trang trước
+        </a>
+    </c:if>
+	<c:if test="${totalPages > 0}">
+    <!-- Nút số trang -->
+    <c:forEach begin="0" end="${totalPages - 1}" var="i">
+        <c:choose>
+            <c:when test="${i == currentPage}">
+                <span class="bg-white text-black font-bold py-2 px-4 rounded mx-2">${i + 1}</span>
+            </c:when>
+            <c:otherwise>
+                <a href="<c:url value='/admin/category/search?name=${searchName}&page=${i}'/>" 
+                   class="bg-black text-white hover:bg-gray-800 py-2 px-4 rounded mx-2">
+                   ${i + 1}
+                </a>
+            </c:otherwise>
+        </c:choose>
+    </c:forEach>
+    </c:if>
+
+    <c:if test="${currentPage < totalPages - 1}">
+        <a href="<c:url value='/admin/category/search?name=${searchName}&page=${currentPage + 1}'/>" 
+           class="bg-black text-white hover:bg-gray-800 py-2 px-4 rounded mx-2">
+           Trang tiếp theo
+        </a>
+    </c:if>
+</div>
+
+
+
+ </div>
 </body>
 
 </html>

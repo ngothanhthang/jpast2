@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import jakarta.persistence.*;
+import jakarta.servlet.http.Part;
 
 @Entity
 @Table(name="videos")
@@ -51,8 +52,11 @@ public class Video implements Serializable{
 
 	 @Column(name="Views")
 
-
 	 private int views;
+	 
+	 @Column(name="VideoPath")
+	 private String videoPath;
+
 
 	 @ManyToOne
 
@@ -126,6 +130,14 @@ public class Video implements Serializable{
 	
     public String getCategoryName() {	
         return category != null ? category.getCategoryname() : null;
+    }
+    
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPart) {
+        this.videoPath = videoPart;
     }
 	 
 }

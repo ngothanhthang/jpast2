@@ -22,13 +22,15 @@ import vn.iostar.services.impl.VideoService;
 import vn.iostar.utils.Constant;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
-maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
+maxFileSize = 1024 * 1024 * 100, maxRequestSize = 1024 * 1024 * 100 * 5)
 @WebServlet(urlPatterns = {"/admin/videos", "/admin/video/edit", "/admin/video/update",
-"/admin/video/insert", "/admin/video/add", "/admin/video/delete"})
+"/admin/video/insert", "/admin/video/add", "/admin/video/delete", "/admin/video/search"})
+
 public class VideoController extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 	private IVideoService videoService = new VideoService();
+	private static final int PAGE_SIZE = 5; // Số dòng mỗi trang
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -38,8 +40,18 @@ public class VideoController extends HttpServlet{
         String url = req.getRequestURI();
 
         if (url.contains("videos")) {
-            List<Video> list = videoService.findAll();
+            String pageParam = req.getParameter("page");
+            int page = (pageParam != null) ? Integer.parseInt(pageParam) : 0;
+
+            List<Video> list = videoService.findAll(page, PAGE_SIZE);
             req.setAttribute("listVideos", list);
+
+            int totalVideos = videoService.count();
+            int totalPages = (totalVideos > 0) ? (int) Math.ceil((double) totalVideos / PAGE_SIZE) : 0;
+
+            req.setAttribute("totalPages", totalPages);
+            req.setAttribute("currentPage", page);
+
             req.getRequestDispatcher("/views/admin/video-list.jsp").forward(req, resp);
         } else if (url.contains("/admin/video/edit")) {
         	String videoId = req.getParameter("id");
@@ -68,12 +80,48 @@ public class VideoController extends HttpServlet{
             }
             resp.sendRedirect(req.getContextPath() + "/admin/videos");
         }
+        else if (url.contains("/admin/video/search")) {
+            String title = req.getParameter("title");
+            List<Video> list = videoService.findByTitle(title);
+
+            int totalVideos = list.size();
+            int totalPages = (int) Math.ceil((double) totalVideos / PAGE_SIZE);
+            req.setAttribute("totalPages", totalPages);
+
+            String pageParam = req.getParameter("page");
+            int currentPage=0;
+            try {
+                if (pageParam != null) {
+                    currentPage = Integer.parseInt(pageParam);
+                }
+            } catch (NumberFormatException e) {
+                currentPage = 0; // Nếu số trang không hợp lệ, mặc định về trang đầu tiên
+            }
+
+            if (currentPage < 0) {
+                currentPage = 0;
+            } else if (currentPage >= totalPages) {
+                currentPage = totalPages - 1;
+            }
+            req.setAttribute("currentPage", currentPage);
+
+            int start = currentPage * PAGE_SIZE;
+            int end = Math.min(start + PAGE_SIZE, totalVideos);
+            if (start < 0 || start >= totalVideos) {
+                start = 0; // Đảm bảo start không nằm ngoài danh sách
+            }
+            List<Video> pagedList = list.subList(start, end);
+            req.setAttribute("listVideos", pagedList);
+            req.setAttribute("searchTitle", title);
+
+            req.getRequestDispatcher("/views/admin/video-list.jsp").forward(req, resp);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-    	  req.setCharacterEncoding("UTF-8");
+    	  	req.setCharacterEncoding("UTF-8");
     	    resp.setCharacterEncoding("UTF-8");
 
     	    String url = req.getRequestURI();
@@ -115,6 +163,27 @@ public class VideoController extends HttpServlet{
     	                fname = System.currentTimeMillis() + "." + ext;
     	                part.write(uploadPath + "/" + fname);
     	                video.setPoster(fname); // Ghi lại tên file mới
+    	            }
+    	        } catch (Exception e) {
+    	            e.printStackTrace();
+    	        }
+    	        
+    	        String videoPath = ""; // Lưu đường dẫn video
+    	        String uploadVideoPath = getServletContext().getRealPath("/uploadvideo"); // Đường dẫn đến thư mục lưu video
+    	        File uploadVideoDir = new File(uploadVideoPath);
+    	        if (!uploadVideoDir.exists()) {
+    	            uploadVideoDir.mkdir(); // Tạo thư mục nếu chưa có
+    	        }
+
+    	        try {
+    	            Part videoPart = req.getPart("newVideo"); // Lấy phần video từ request
+    	            if (videoPart != null && videoPart.getSize() > 0) {
+    	                String videoFileName = Paths.get(videoPart.getSubmittedFileName()).getFileName().toString();
+    	                int index = videoFileName.lastIndexOf(".");
+    	                String ext = videoFileName.substring(index + 1); // Lấy phần mở rộng file
+    	                videoPath = System.currentTimeMillis() + "." + ext; // Tạo tên file mới
+    	                videoPart.write(uploadVideoPath + "/" + videoPath); // Lưu video vào thư mục
+    	                video.setVideoPath(videoPath); // Ghi lại đường dẫn video trong đối tượng Video
     	            }
     	        } catch (Exception e) {
     	            e.printStackTrace();
@@ -164,6 +233,28 @@ public class VideoController extends HttpServlet{
     	        } catch (Exception e) {
     	            e.printStackTrace();
     	        }
+    	        
+    	        String videoPath = ""; // Lưu đường dẫn video
+    	        String uploadVideoPath = getServletContext().getRealPath("/uploadvideo"); // Đường dẫn đến thư mục lưu video
+    	        File uploadVideoDir = new File(uploadVideoPath);
+    	        if (!uploadVideoDir.exists()) {
+    	            uploadVideoDir.mkdir(); // Tạo thư mục nếu chưa có
+    	        }
+
+    	        try {
+    	            Part videoPart = req.getPart("videoFile"); // Lấy phần video từ request
+    	            if (videoPart != null && videoPart.getSize() > 0) {
+    	                String videoFileName = Paths.get(videoPart.getSubmittedFileName()).getFileName().toString();
+    	                int index = videoFileName.lastIndexOf(".");
+    	                String ext = videoFileName.substring(index + 1); // Lấy phần mở rộng file
+    	                videoPath = System.currentTimeMillis() + "." + ext; // Tạo tên file mới
+    	                videoPart.write(uploadVideoPath + "/" + videoPath); // Lưu video vào thư mục
+    	                video.setVideoPath(videoPath); // Ghi lại đường dẫn video trong đối tượng Video
+    	            }
+    	        } catch (Exception e) {
+    	            e.printStackTrace();
+    	        }
+
 
     	        videoService.insert(video);
     	        resp.sendRedirect(req.getContextPath() + "/admin/videos");

@@ -79,7 +79,7 @@
         <label for="categoryname">Tên Thể loại:</label>
         <input type="text" id="categoryname" name="categoryname" required>
 
-        <label for="images">Hình ảnh:</label>
+        <label for="images" onclick="return false;">Hình ảnh:</label>
         <input type="file" id="images" name="images" accept="image/*" onchange="chooseFile(this)" required><br>
 
         <!-- Khung hiển thị ảnh -->
