@@ -22,4 +22,6 @@ public interface IVideoDao {
 
 	void insert(Video video);
 
+	List<Video> findByCategoryId(int categoryId);
+
 }

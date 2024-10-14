@@ -11,7 +11,8 @@ import vn.iostar.services.impl.UserService;
 
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/register", "/login"})
+@WebServlet(urlPatterns = {"/login", "/register"})
+
 public class UserController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

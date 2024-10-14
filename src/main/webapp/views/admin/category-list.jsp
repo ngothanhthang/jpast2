@@ -40,6 +40,22 @@
             <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-8">
                 <i class="fas fa-list-alt mr-4"></i>Danh sách Thể loại
             </h1>
+            <div class="text-right mb-4">
+    <c:if test="${not empty sessionScope.user}">
+        <a href="<c:url value='/login'/>" class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition duration-300 ease-in-out">
+            <i class="fas fa-sign-out-alt mr-2"></i>Đăng xuất
+        </a>
+    </c:if>
+</div>
+            
+					          <div class="text-right text-2xl font-bold text-gray-800 mb-4">
+			    <c:if test="${not empty sessionScope.user}">
+			        <span class="bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text">
+			            Xin chào, <c:out value="${sessionScope.user.username}"/>!
+			        </span>
+			    </c:if>
+			</div>
+
             <div class="flex justify-center mb-6">
                 <form action="<c:url value='/admin/category/search'/>" method="get" class="flex w-full max-w-md">
                     <input type="text" name="name" placeholder="Nhập tên thể loại" class="w-full px-4 py-2 rounded-l-lg border-t border-b border-l text-gray-800 border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary" required>
@@ -52,6 +68,9 @@
                 <a href="<c:url value='/admin/category/add'/>" class="inline-flex items-center px-6 py-3 bg-secondary hover:bg-green-600 text-white font-bold rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                     <i class="fas fa-plus-circle mr-2"></i>Thêm Thể loại
                 </a>
+                <a href="<c:url value='/admin/videos'/>" class="inline-flex items-center px-6 py-3 bg-primary hover:bg-indigo-600 text-white font-bold rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 ml-4">
+        <i class="fas fa-video mr-2"></i>Danh sách toàn bộ Video
+    </a>
             </div>
         </div>
 
@@ -94,6 +113,10 @@
                                 <a href="<c:url value='/admin/category/delete?id=${cate.categoryId}'/>" class="text-red-600 hover:text-red-900" onclick="return confirm('Bạn có chắc chắn muốn xóa thể loại này?');">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
+                                <!-- Thêm liên kết để xem video thuộc category -->
+							    <a href="<c:url value='/admin/category/videos?id=${cate.categoryId}'/>" class="text-green-600 hover:text-green-900 ml-3">
+							        <i class="fas fa-video"></i> View Videos
+							    </a>
                             </td>
                         </tr>
                     </c:forEach>

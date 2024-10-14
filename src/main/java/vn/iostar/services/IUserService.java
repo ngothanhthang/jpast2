@@ -27,5 +27,5 @@ public interface IUserService {
 	User login(String username, String password);
 
 	IUserDao userDao = new UserDao();
-
+	
 }

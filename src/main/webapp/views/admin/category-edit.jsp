@@ -228,6 +228,7 @@
             <div class="image-container">
                 <span class="image-label">Hình đại diện hiện tại:</span>
                 <img id="currentImage" src="${pageContext.request.contextPath}/upload/${cate.images}" alt="Current Image">
+
             </div>
 
             <div class="image-group">

@@ -74,14 +74,13 @@ public class VideoDao implements IVideoDao{
 
 	@Override
 	public Video findById(String videoId) {
-		// TODO Auto-generated method stub
 		 EntityManager enma = JPAConfig.getEntityManager();
 	     return enma.find(Video.class, videoId);  // Tìm video theo ID
 	}
 
 	@Override
 	public List<Video> findAll() {
-		// TODO Auto-generated method stub
+
 		 EntityManager enma = JPAConfig.getEntityManager();
 	     TypedQuery<Video> query = enma.createNamedQuery("Video.findAll", Video.class);  // Truy vấn tất cả video
 	     return query.getResultList();
@@ -89,7 +88,7 @@ public class VideoDao implements IVideoDao{
 
 	@Override
 	public List<Video> findByTitle(String title) {
-		// TODO Auto-generated method stub
+
 		EntityManager enma = JPAConfig.getEntityManager();
         String jpql = "SELECT v FROM Video v WHERE v.title like :title";
         TypedQuery<Video> query = enma.createQuery(jpql, Video.class);
@@ -114,5 +113,13 @@ public class VideoDao implements IVideoDao{
         Query query = enma.createQuery(jpql);
         return ((Long) query.getSingleResult()).intValue();
 	}
+	@Override
+	public List<Video> findByCategoryId(int categoryId) {
+        EntityManager em = JPAConfig.getEntityManager();
+        String jpql = "SELECT v FROM Video v WHERE v.category.categoryId = :categoryId";
+        TypedQuery<Video> query = em.createQuery(jpql, Video.class);
+        query.setParameter("categoryId", categoryId);
+        return query.getResultList();
+    }
 
 }

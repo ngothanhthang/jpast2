@@ -1,6 +1,7 @@
 package vn.iostar.controllers.admin;
 
 import java.io.File;
+import vn.iostar.utils.Constant;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -13,16 +14,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import vn.iostar.entity.Category;
+import vn.iostar.entity.Video;
 import vn.iostar.services.impl.CategoryService;
+import vn.iostar.services.impl.VideoService;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
 maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 @WebServlet(urlPatterns = {"/admin/categories", "/admin/category/edit", "/admin/category/update",
-"/admin/category/insert", "/admin/category/add", "/admin/category/delete","/admin/category/search"})
+"/admin/category/insert", "/admin/category/add", "/admin/category/delete","/admin/category/search","/admin/category/videos"})
 public class CategoryController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private CategoryService cateService = new CategoryService();
+    private VideoService video=new VideoService();
     private static final int PAGE_SIZE = 5; // Số dòng mỗi trang
 
     @Override
@@ -31,8 +35,22 @@ public class CategoryController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         String url = req.getRequestURI();
+        if (url.contains("/admin/category/videos")) {
+            // Lấy ID của category từ request
+            int categoryId = Integer.parseInt(req.getParameter("id"));
+            
+            // Lấy danh sách video thuộc category này
+            List<Video> Videos = video.findByCategoryId(categoryId);
+            req.setAttribute("videos", Videos);
+            
+            // Lấy thông tin category để hiển thị tiêu đề
+            Category category = cateService.findById(categoryId);
+            req.setAttribute("category", category);
 
-        if (url.contains("categories")) {
+            // Điều hướng đến trang hiển thị video
+            req.getRequestDispatcher("/views/admin/category-videos.jsp").forward(req, resp);
+        }
+        else if (url.contains("categories")) {
             // Lấy số trang từ tham số request
             String pageParam = req.getParameter("page");
             int page = (pageParam != null) ? Integer.parseInt(pageParam) : 0;
@@ -139,7 +157,7 @@ public class CategoryController extends HttpServlet {
 
             // Xử lý hình ảnh
             String fname = "";
-            String uploadPath = getServletContext().getRealPath("/upload");
+            String uploadPath = Constant.UPLOAD_DIRECTORY;;
 
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
@@ -156,6 +174,7 @@ public class CategoryController extends HttpServlet {
                     fname = System.currentTimeMillis() + "." + ext;
                     // Upload file
                     part.write(uploadPath + "/" + fname);
+                    
                     // Ghi tên file vào data
                     category.setImages(fname);
                 } else {
@@ -176,7 +195,7 @@ public class CategoryController extends HttpServlet {
             category.setStatus(status);
 
             String fname = "";
-            String uploadPath = getServletContext().getRealPath("/upload");
+            String uploadPath = Constant.UPLOAD_DIRECTORY;
 
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {

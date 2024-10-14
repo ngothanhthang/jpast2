@@ -9,6 +9,9 @@ version="3.0">
 <class>vn.iotstar.entity.Video</class>
 <class>vn.iotstar.entity.User</class>
 <class>vn.iotstar.entity.Role</class>
+<class>vn.iotstar.entity.Comment</class>
+<class>vn.iotstar.entity.Rating</class>
+<class>vn.iotstar.entity.Like</class>
 
 <properties>
 <property name="jakarta.persistence.jdbc.url"

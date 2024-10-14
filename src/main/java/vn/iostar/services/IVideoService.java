@@ -25,5 +25,6 @@ public interface IVideoService {
 	void insert(Video video);
 
 	IVideoDao videoDao = new VideoDao();
-
+	
+	List<Video> findByCategoryId(int categoryId);
 }

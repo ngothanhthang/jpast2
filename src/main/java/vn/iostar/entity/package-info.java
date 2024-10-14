@@ -1,1 +1,0 @@
-package vn.iostar.entity;

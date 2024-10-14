@@ -1,6 +1,7 @@
 package vn.iostar.entity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import jakarta.persistence.*;
 
@@ -10,6 +11,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     private Long id;
 
     @Column(name = "username", nullable = false, unique = true)
@@ -28,6 +30,13 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id")  // Cột khóa ngoại của bảng role
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Rating> ratings;  // Danh sách các đánh giá của người dùng
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Like> likes;  // Danh sách các đánh giá của người dùng
+    
 
     // Constructors
     public User() {}

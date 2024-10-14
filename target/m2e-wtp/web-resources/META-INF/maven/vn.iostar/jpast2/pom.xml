@@ -93,11 +93,7 @@
 </dependency>
 
 
-  	<dependency>
-  		<groupId>com.trinhvu</groupId>
-  		<artifactId>Add2Num</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
+
   </dependencies>
 <build>  
   	<pluginManagement>

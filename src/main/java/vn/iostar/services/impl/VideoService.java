@@ -55,4 +55,10 @@ public class VideoService implements IVideoService{
 		// TODO Auto-generated method stub
 		return videoDao.count();
 	}
+
+	@Override
+	public List<Video> findByCategoryId(int categoryId) {
+		return videoDao.findByCategoryId(categoryId);
+	}
+
 }
